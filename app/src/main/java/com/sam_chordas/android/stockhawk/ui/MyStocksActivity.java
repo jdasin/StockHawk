@@ -19,6 +19,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.sam_chordas.android.stockhawk.R;
@@ -52,6 +53,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
   private Context mContext;
   private Cursor mCursor;
   boolean isConnected;
+  private TextView infoMessagesTextView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +69,15 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     // The intent service is for executing immediate pulls from the Yahoo API
     // GCMTaskService can only schedule tasks, they cannot execute immediately
     mServiceIntent = new Intent(this, StockIntentService.class);
+    infoMessagesTextView = (TextView) findViewById(R.id.info_message);
     if (savedInstanceState == null){
       // Run the initialize task service so that some stocks appear upon an empty database
       mServiceIntent.putExtra("tag", "init");
       if (isConnected){
         startService(mServiceIntent);
+        hideConnectionWarning();
       } else{
-        networkToast();
+        displayNoConnectionWarning();
       }
     }
     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -108,7 +112,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                       new String[] { input.toString() }, null);
                   if (c.getCount() != 0) {
                     Toast toast =
-                        Toast.makeText(MyStocksActivity.this, "This stock is already saved!",
+                        Toast.makeText(MyStocksActivity.this, R.string.info_stock_already_saved,
                             Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
                     toast.show();
@@ -122,8 +126,9 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 }
               })
               .show();
+          hideConnectionWarning();
         } else {
-          networkToast();
+          displayNoConnectionWarning();
         }
 
       }
@@ -155,6 +160,10 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     }
   }
 
+  private void hideConnectionWarning() {
+    infoMessagesTextView.setVisibility(View.GONE);
+  }
+
 
   @Override
   public void onResume() {
@@ -162,8 +171,10 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
   }
 
-  public void networkToast(){
+  public void displayNoConnectionWarning(){
     Toast.makeText(mContext, getString(R.string.network_toast), Toast.LENGTH_SHORT).show();
+    infoMessagesTextView.setText(R.string.info_no_internet);
+    infoMessagesTextView.setVisibility(View.VISIBLE);
   }
 
   public void restoreActionBar() {
