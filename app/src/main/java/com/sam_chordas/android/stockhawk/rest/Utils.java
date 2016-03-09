@@ -31,14 +31,22 @@ public class Utils {
         if (count == 1){
           jsonObject = jsonObject.getJSONObject("results")
               .getJSONObject("quote");
-          batchOperations.add(buildBatchOperation(jsonObject));
+          if (jsonObject.getString("Change") != "null") {
+            ContentProviderOperation operation = buildBatchOperation(jsonObject);
+            batchOperations.add(operation);
+          }
         } else{
           resultsArray = jsonObject.getJSONObject("results").getJSONArray("quote");
 
           if (resultsArray != null && resultsArray.length() != 0){
             for (int i = 0; i < resultsArray.length(); i++){
               jsonObject = resultsArray.getJSONObject(i);
-              batchOperations.add(buildBatchOperation(jsonObject));
+              if (jsonObject.getString("Change") != "null") {
+                ContentProviderOperation operation = buildBatchOperation(jsonObject);
+                if (operation != null) {
+                  batchOperations.add(operation);
+                }
+              }
             }
           }
         }
@@ -74,6 +82,7 @@ public class Utils {
   public static ContentProviderOperation buildBatchOperation(JSONObject jsonObject){
     ContentProviderOperation.Builder builder = ContentProviderOperation.newInsert(
         QuoteProvider.Quotes.CONTENT_URI);
+    Boolean invalidOperation = false;
     try {
       String change = jsonObject.getString("Change");
       builder.withValue(QuoteColumns.SYMBOL, jsonObject.getString("symbol"));
@@ -90,7 +99,16 @@ public class Utils {
 
     } catch (JSONException e){
       e.printStackTrace();
+      invalidOperation = true;
+    } catch (NumberFormatException invalidNumEx) {
+      invalidNumEx.printStackTrace();
+      invalidOperation = true;
     }
-    return builder.build();
+    if (invalidOperation) {
+      return null;
+    } else {
+      return builder.build();
+    }
+
   }
 }
