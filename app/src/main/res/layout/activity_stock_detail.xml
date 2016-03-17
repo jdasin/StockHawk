@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <TextView
+            android:id="@+id/startDate"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:datePickerMode="spinner"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_height="wrap_content">
+        </TextView>
+        <TextView
+            android:id="@+id/endDate"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:datePickerMode="spinner"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_height="wrap_content">
+        </TextView>
+    </LinearLayout>
+
+    <com.db.chart.view.LineChartView
+        xmlns:chart="http://schemas.android.com/apk/res-auto"
+        android:layout_margin="20dp"
+        android:id="@+id/linechart"
+        chart:chart_axisColor="#FFF"
+        chart:chart_labelColor="#FFF"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"/>
+
+</LinearLayout>

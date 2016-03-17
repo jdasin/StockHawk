@@ -62,7 +62,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     ConnectivityManager cm =
         (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+    final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
     isConnected = activeNetwork != null &&
         activeNetwork.isConnectedOrConnecting();
     setContentView(R.layout.activity_my_stocks);
@@ -90,6 +90,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
               @Override public void onItemClick(View v, int position) {
                 //TODO:
                 // do something on item click
+                Intent stockDetailIntent = new Intent(MyStocksActivity.this, StockDetailActivity.class);
+                MyStocksActivity.this.startActivity(stockDetailIntent);
               }
             }));
     recyclerView.setAdapter(mCursorAdapter);
